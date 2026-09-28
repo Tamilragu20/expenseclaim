@@ -1,5 +1,6 @@
 package com.example.expenseclaim.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 
@@ -11,22 +12,18 @@ public class ExpenseItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "claim_id", nullable = false)
     private Claim claim;
 
     private String category;
-
     private String description;
-
     private BigDecimal amount;
-
     private BigDecimal policyLimit;
-
     private boolean flagged;
 
-    public ExpenseItem() {
-    }
+    public ExpenseItem() {}
 
     public Long getId() {
         return id;

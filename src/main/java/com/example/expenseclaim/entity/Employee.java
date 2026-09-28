@@ -1,5 +1,6 @@
 package com.example.expenseclaim.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.util.List;
 
@@ -12,18 +13,15 @@ public class Employee {
     private Long id;
 
     private String name;
-
     private String email;
-
     private String department;
-
     private String managerName;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL)
     private List<Claim> claims;
 
-    public Employee() {
-    }
+    public Employee() {}
 
     public Long getId() {
         return id;

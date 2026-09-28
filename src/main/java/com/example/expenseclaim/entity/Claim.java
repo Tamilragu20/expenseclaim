@@ -1,5 +1,6 @@
 package com.example.expenseclaim.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -18,23 +19,19 @@ public class Claim {
     private Employee employee;
 
     private LocalDate claimDate;
-
     private String description;
-
     private BigDecimal totalAmount;
-
     private String status;
-
     private boolean managerOverride;
 
     @OneToMany(mappedBy = "claim", cascade = CascadeType.ALL)
     private List<ExpenseItem> expenseItems;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "claim", cascade = CascadeType.ALL)
     private List<ApprovalStep> approvalSteps;
 
-    public Claim() {
-    }
+    public Claim() {}
 
     public Long getId() {
         return id;
