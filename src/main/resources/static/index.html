@@ -2,351 +2,364 @@
 <html lang="en">
 
 <head>
-
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Expense Claim Management System</title>
+    <title>ExpenseClaim - Expense Reimbursement System</title>
 
     <link rel="stylesheet" href="style.css">
-
 </head>
-
 
 <body>
 
+    <!-- ================= HEADER ================= -->
+    <header class="top-header">
 
-    <!-- =========================
-         HEADER
-    ========================== -->
+        <div class="brand">
+            <div class="brand-icon">EC</div>
 
-    <header class="header">
+            <div>
+                <h1>ExpenseClaim</h1>
+                <p>Employee Expense Reimbursement System</p>
+            </div>
+        </div>
 
-        <div>
-
-            <h1>Expense Claim</h1>
-
-            <p>
-                Employee Reimbursement Management System
-            </p>
-
+        <div class="header-status">
+            <span class="status-dot"></span>
+            System Online
         </div>
 
     </header>
 
 
-
+    <!-- ================= MAIN CONTAINER ================= -->
     <main class="container">
 
 
-        <!-- =========================
-             DASHBOARD
-        ========================== -->
+        <!-- ================= WELCOME ================= -->
+        <section class="welcome-section">
 
-        <section class="dashboard">
+            <div>
+                <p class="welcome-small">WELCOME TO EXPENSECLAIM</p>
 
+                <h2>
+                    Manage Employee Expenses
+                    <span>Effortlessly.</span>
+                </h2>
 
-            <div class="stat-card">
-
-                <span class="stat-title">
-                    Employee
-                </span>
-
-                <strong>
-                    Employee Management
-                </strong>
-
-                <small>
-                    Add & View Employees
-                </small>
-
+                <p class="welcome-description">
+                    Submit, review, approve and process employee expense
+                    reimbursement claims through a simple workflow.
+                </p>
             </div>
-
-
-
-            <div class="stat-card">
-
-                <span class="stat-title">
-                    Claim
-                </span>
-
-                <strong>
-                    Expense
-                </strong>
-
-                <small>
-                    Reimbursement
-                </small>
-
-            </div>
-
-
-
-            <div class="stat-card">
-
-                <span class="stat-title">
-                    Approval
-                </span>
-
-                <strong>
-                    Manager
-                </strong>
-
-                <small>
-                    Review Required
-                </small>
-
-            </div>
-
-
-
-            <div class="stat-card">
-
-                <span class="stat-title">
-                    Payment
-                </span>
-
-                <strong>
-                    Finance
-                </strong>
-
-                <small>
-                    Payment Processing
-                </small>
-
-            </div>
-
 
         </section>
 
 
+        <!-- ================= DASHBOARD ================= -->
+        <section class="dashboard-section">
 
-        <!-- =========================
-             EMPLOYEE MANAGEMENT
-        ========================== -->
-
-        <section class="card">
-
-
-            <div class="section-header">
-
+            <div class="section-heading">
                 <div>
+                    <h2>Dashboard</h2>
+                    <p>Live expense claim management overview</p>
+                </div>
+            </div>
 
-                    <h2>
-                        Employee Management
-                    </h2>
 
-                    <p>
-                        Add a new employee to the system
-                    </p>
+            <div class="dashboard-grid">
+
+
+                <!-- TOTAL CLAIMS -->
+                <div class="dashboard-card">
+
+                    <div class="dashboard-icon claim-icon">
+                        🧾
+                    </div>
+
+                    <div>
+                        <h3 id="totalClaimsCount">0</h3>
+                        <p>Total Expense Claims</p>
+                    </div>
+
+                </div>
+
+
+                <!-- PENDING -->
+                <div class="dashboard-card">
+
+                    <div class="dashboard-icon approval-icon">
+                        ⏳
+                    </div>
+
+                    <div>
+                        <h3 id="pendingClaimsCount">0</h3>
+                        <p>Pending Manager Approval</p>
+                    </div>
+
+                </div>
+
+
+                <!-- APPROVED -->
+                <div class="dashboard-card">
+
+                    <div class="dashboard-icon employee-icon">
+                        ✓
+                    </div>
+
+                    <div>
+                        <h3 id="approvedClaimsCount">0</h3>
+                        <p>Approved Claims</p>
+                    </div>
+
+                </div>
+
+
+                <!-- PAID -->
+                <div class="dashboard-card">
+
+                    <div class="dashboard-icon finance-icon">
+                        ₹
+                    </div>
+
+                    <div>
+                        <h3 id="paidClaimsCount">0</h3>
+                        <p>Paid Claims</p>
+                    </div>
 
                 </div>
 
             </div>
 
 
+            <!-- REJECTED COUNT -->
+
+            <div class="dashboard-card dashboard-rejected">
+
+                <div class="dashboard-icon">
+                    ✕
+                </div>
+
+                <div>
+                    <h3 id="rejectedClaimsCount">0</h3>
+                    <p>Rejected Claims</p>
+                </div>
+
+            </div>
+
+
+            <div id="dashboardResult" class="result-box"></div>
+
+        </section>
+
+
+        <!-- ================= EMPLOYEE MANAGEMENT ================= -->
+        <section class="card-section">
+
+            <div class="section-heading">
+
+                <div class="heading-icon">
+                    👤
+                </div>
+
+                <div>
+                    <h2>Employee Management</h2>
+                    <p>Add a new employee to the system</p>
+                </div>
+
+            </div>
+
 
             <div class="form-grid">
 
-
-                <!-- Employee Name -->
-
-                <div class="form-group">
-
-                    <label>
-                        Employee Name
-                    </label>
+                <div class="input-group">
+                    <label>Employee Name</label>
 
                     <input
                         type="text"
                         id="employeeName"
                         placeholder="Enter employee name">
-
                 </div>
 
 
-
-                <!-- Email -->
-
-                <div class="form-group">
-
-                    <label>
-                        Email
-                    </label>
+                <div class="input-group">
+                    <label>Email</label>
 
                     <input
                         type="email"
                         id="employeeEmail"
-                        placeholder="Enter employee email">
-
+                        placeholder="Enter email address">
                 </div>
 
 
-
-                <!-- Department -->
-
-                <div class="form-group">
-
-                    <label>
-                        Department
-                    </label>
+                <div class="input-group">
+                    <label>Department</label>
 
                     <input
                         type="text"
                         id="employeeDepartment"
                         placeholder="Example: IT">
-
                 </div>
 
 
-
-                <!-- Manager -->
-
-                <div class="form-group">
-
-                    <label>
-                        Manager Name
-                    </label>
+                <div class="input-group">
+                    <label>Manager Name</label>
 
                     <input
                         type="text"
                         id="employeeManager"
                         placeholder="Enter manager name">
-
                 </div>
 
+            </div>
+
+
+            <div class="button-area">
+
+                <button
+                    class="primary-btn"
+                    onclick="addEmployee()">
+
+                    + Add Employee
+
+                </button>
 
             </div>
 
 
-
-            <button
-                class="primary-button"
-                onclick="addEmployee()">
-
-                Add Employee
-
-            </button>
-
-
-
-            <div
-                id="employeeResult"
-                class="result">
-
-            </div>
-
+            <div id="employeeResult" class="result-box"></div>
 
         </section>
 
 
+        <!-- ================= EMPLOYEE DETAILS ================= -->
+        <section class="card-section">
 
-        <!-- =========================
-             EMPLOYEE DETAILS
-        ========================== -->
+            <div class="section-heading">
 
-        <section class="card">
-
-
-            <div class="section-header">
+                <div class="heading-icon">
+                    🔍
+                </div>
 
                 <div>
-
-                    <h2>
-                        Employee Details
-                    </h2>
-
-                    <p>
-                        View employee information
-                    </p>
-
+                    <h2>Employee Details</h2>
+                    <p>View employee information using employee ID</p>
                 </div>
 
             </div>
 
 
+            <div class="inline-form">
 
-            <div class="form-row">
+                <div class="input-group">
 
-
-                <div class="form-group">
-
-                    <label>
-                        Employee ID
-                    </label>
+                    <label>Employee ID</label>
 
                     <input
                         type="number"
                         id="employeeId"
-                        value="1">
+                        placeholder="Enter employee ID">
 
                 </div>
 
 
+                <button
+                    class="secondary-btn"
+                    onclick="loadEmployee()">
 
-                <div class="button-area">
+                    View Employee
 
-                    <button
-                        onclick="loadEmployee()">
-
-                        View Employee
-
-                    </button>
-
-                </div>
-
+                </button>
 
             </div>
 
 
-
-            <div
-                id="employeeDetails"
-                class="result">
-
-            </div>
-
+            <div id="employeeDetails" class="result-box"></div>
 
         </section>
 
 
+        <!-- ================= EMPLOYEE CLAIMS ================= -->
+        <section class="card-section">
 
-        <!-- =========================
-             CREATE CLAIM
-        ========================== -->
+            <div class="section-heading">
 
-        <section class="card">
-
-
-            <div class="section-header">
+                <div class="heading-icon">
+                    📋
+                </div>
 
                 <div>
-
-                    <h2>
-                        Create Expense Claim
-                    </h2>
-
-                    <p>
-                        Submit a new reimbursement claim
-                    </p>
-
+                    <h2>Employee Claims</h2>
+                    <p>View all expense claims submitted by an employee</p>
                 </div>
 
             </div>
 
 
+            <div class="inline-form">
+
+                <div class="input-group">
+
+                    <label>Employee ID</label>
+
+                    <input
+                        type="number"
+                        id="employeeClaimsId"
+                        placeholder="Enter employee ID">
+
+                </div>
+
+
+                <button
+                    class="secondary-btn"
+                    onclick="loadEmployeeClaims()">
+
+                    View My Claims
+
+                </button>
+
+            </div>
+
+
+            <div id="employeeClaimsResult" class="result-box"></div>
+
+        </section>
+
+
+        <!-- ================= CREATE CLAIM ================= -->
+        <section class="card-section">
+
+            <div class="section-heading">
+
+                <div class="heading-icon">
+                    🧾
+                </div>
+
+                <div>
+                    <h2>Create Expense Claim</h2>
+                    <p>Submit an employee expense reimbursement request</p>
+                </div>
+
+            </div>
+
 
             <div class="form-grid">
 
+                <div class="input-group full-width">
 
-                <!-- Claim Description -->
+                    <label>Employee ID</label>
 
-                <div class="form-group">
+                    <input
+                        type="number"
+                        id="claimEmployeeId"
+                        placeholder="Enter employee ID">
 
-                    <label>
-                        Claim Description
-                    </label>
+                </div>
+
+
+                <div class="input-group full-width">
+
+                    <label>Claim Description</label>
 
                     <input
                         type="text"
@@ -356,73 +369,42 @@
                 </div>
 
 
+                <div class="input-group">
 
-                <!-- Category -->
-
-                <div class="form-group">
-
-                    <label>
-                        Expense Category
-                    </label>
+                    <label>Expense Category</label>
 
                     <select id="category">
 
+                        <option value="">Select category</option>
 
                         <option value="TRAVEL">
                             Travel
                         </option>
 
-
                         <option value="FOOD">
                             Food
                         </option>
-
 
                         <option value="HOTEL">
                             Hotel
                         </option>
 
-
                         <option value="TRANSPORT">
                             Transport
                         </option>
 
-
                         <option value="OTHER">
                             Other
                         </option>
-
 
                     </select>
 
                 </div>
 
 
+                <div class="input-group">
 
-                <!-- Expense Description -->
-
-                <div class="form-group">
-
-                    <label>
-                        Expense Description
-                    </label>
-
-                    <input
-                        type="text"
-                        id="expenseDescription"
-                        placeholder="Example: Flight and local travel">
-
-                </div>
-
-
-
-                <!-- Amount -->
-
-                <div class="form-group">
-
-                    <label>
-                        Amount
-                    </label>
+                    <label>Expense Amount</label>
 
                     <input
                         type="number"
@@ -432,48 +414,33 @@
                 </div>
 
 
-            </div>
+                <div class="input-group full-width">
 
+                    <label>Expense Description</label>
 
+                    <input
+                        type="text"
+                        id="expenseDescription"
+                        placeholder="Example: Train ticket">
 
-            <button
-                class="primary-button"
-                onclick="createClaim()">
-
-                Submit Claim
-
-            </button>
-
-
-
-            <div
-                id="claimResult"
-                class="result">
+                </div>
 
             </div>
 
 
-        </section>
+            <div class="policy-info">
 
-
-
-        <!-- =========================
-             CLAIM STATUS
-        ========================== -->
-
-        <section class="card">
-
-
-            <div class="section-header">
+                <div class="policy-icon">
+                    ℹ
+                </div>
 
                 <div>
 
-                    <h2>
-                        Claim Status
-                    </h2>
+                    <strong>Policy Check</strong>
 
                     <p>
-                        Check the current status of a claim
+                        Expense amounts are automatically checked against
+                        category-wise policy limits.
                     </p>
 
                 </div>
@@ -481,374 +448,366 @@
             </div>
 
 
+            <div class="button-area">
 
-            <div class="form-row">
+                <button
+                    class="primary-btn"
+                    onclick="createClaim()">
 
+                    Submit Expense Claim
 
-                <div class="form-group">
-
-                    <label>
-                        Claim ID
-                    </label>
-
-                    <input
-                        type="number"
-                        id="claimId"
-                        placeholder="Example: 4">
-
-                </div>
-
-
-
-                <div class="button-area">
-
-                    <button
-                        onclick="getClaim()">
-
-                        View Claim
-
-                    </button>
-
-                </div>
-
+                </button>
 
             </div>
 
 
-
-            <div
-                id="claimDetails"
-                class="result">
-
-            </div>
-
+            <div id="claimResult" class="result-box"></div>
 
         </section>
 
 
+        <!-- ================= CLAIM STATUS ================= -->
+        <section class="card-section">
 
-        <!-- =========================
-             APPROVAL + FINANCE
-        ========================== -->
+            <div class="section-heading">
 
+                <div class="heading-icon">
+                    📋
+                </div>
+
+                <div>
+                    <h2>Claim Status</h2>
+                    <p>Check the current status of an expense claim</p>
+                </div>
+
+            </div>
+
+
+            <div class="inline-form">
+
+                <div class="input-group">
+
+                    <label>Claim ID</label>
+
+                    <input
+                        type="number"
+                        id="claimId"
+                        placeholder="Enter claim ID">
+
+                </div>
+
+
+                <button
+                    class="secondary-btn"
+                    onclick="getClaim()">
+
+                    Check Status
+
+                </button>
+
+            </div>
+
+
+            <div id="claimStatus" class="result-box"></div>
+
+        </section>
+
+
+        <!-- ================= APPROVAL + FINANCE ================= -->
         <div class="two-column">
 
 
+            <!-- MANAGER APPROVAL -->
+            <section class="card-section">
 
-            <!-- =========================
-                 MANAGER APPROVAL
-            ========================== -->
+                <div class="section-heading">
 
-            <section class="card">
-
-
-                <div class="section-header">
+                    <div class="heading-icon">
+                        ✓
+                    </div>
 
                     <div>
-
-                        <h2>
-                            Manager Approval
-                        </h2>
-
-                        <p>
-                            Review and approve claims
-                        </p>
-
+                        <h2>Manager Approval</h2>
+                        <p>Review and approve or reject expense claims</p>
                     </div>
 
                 </div>
 
 
+                <div class="input-group">
 
-                <!-- Claim ID -->
-
-                <div class="form-group">
-
-                    <label>
-                        Claim ID
-                    </label>
+                    <label>Claim ID</label>
 
                     <input
                         type="number"
                         id="approvalClaimId"
-                        placeholder="Example: 4">
+                        placeholder="Claim ID">
 
                 </div>
 
 
+                <div class="input-group">
 
-                <!-- Manager Name -->
-
-                <div class="form-group">
-
-                    <label>
-                        Manager Name
-                    </label>
+                    <label>Manager Name</label>
 
                     <input
                         type="text"
                         id="managerName"
-                        value="Rajesh">
+                        placeholder="Manager name">
 
                 </div>
 
 
+                <div class="input-group">
 
-                <!-- Remarks -->
+                    <label>Remarks</label>
 
-                <div class="form-group">
-
-                    <label>
-                        Remarks
-                    </label>
-
-                    <input
-                        type="text"
-                        id="remarks"
-                        placeholder="Enter approval remarks">
+                    <textarea
+                        id="approvalRemarks"
+                        placeholder="Enter approval or rejection remarks"></textarea>
 
                 </div>
 
 
-
-                <!-- Override -->
-
-                <div class="checkbox">
+                <div class="override-box">
 
                     <input
                         type="checkbox"
                         id="managerOverride">
 
                     <label for="managerOverride">
-
-                        Manager Override
-
+                        Manager Override Required
                     </label>
 
                 </div>
 
 
+                <div class="approval-buttons">
 
-                <button
-                    class="primary-button"
-                    onclick="approveClaim()">
+                    <button
+                        class="approve-btn"
+                        onclick="approveClaim()">
 
-                    Approve Claim
+                        Approve Claim
 
-                </button>
+                    </button>
 
 
+                    <button
+                        class="reject-btn"
+                        onclick="rejectClaim()">
 
-                <div
-                    id="approvalResult"
-                    class="result">
+                        Reject Claim
+
+                    </button>
 
                 </div>
 
 
+                <div id="approvalResult" class="result-box"></div>
+
             </section>
 
 
+            <!-- FINANCE -->
+            <section class="card-section">
 
-            <!-- =========================
-                 FINANCE PAYMENT
-            ========================== -->
+                <div class="section-heading">
 
-            <section class="card">
-
-
-                <div class="section-header">
+                    <div class="heading-icon">
+                        ₹
+                    </div>
 
                     <div>
-
-                        <h2>
-                            Finance Payment
-                        </h2>
-
-                        <p>
-                            Process approved reimbursement
-                        </p>
-
+                        <h2>Finance Payment</h2>
+                        <p>Process approved expense claims</p>
                     </div>
 
                 </div>
 
 
+                <div class="input-group">
 
-                <!-- Claim ID -->
-
-                <div class="form-group">
-
-                    <label>
-                        Claim ID
-                    </label>
+                    <label>Claim ID</label>
 
                     <input
                         type="number"
                         id="paymentClaimId"
-                        placeholder="Example: 4">
+                        placeholder="Claim ID">
 
                 </div>
 
 
+                <div class="input-group">
 
-                <!-- Payment Reference -->
-
-                <div class="form-group">
-
-                    <label>
-                        Payment Reference
-                    </label>
+                    <label>Payment Reference</label>
 
                     <input
                         type="text"
                         id="paymentReference"
-                        placeholder="Example: PAY-2026-0004">
+                        placeholder="Example: PAY-2026-0001">
 
                 </div>
 
 
+                <div class="payment-info">
+
+                    <span>
+                        Payment can be processed only after manager approval.
+                    </span>
+
+                </div>
+
 
                 <button
-                    class="primary-button"
+                    class="pay-btn"
                     onclick="payClaim()">
 
-                    Mark as Paid
+                    Mark Claim as Paid
 
                 </button>
 
 
-
-                <div
-                    id="paymentResult"
-                    class="result">
-
-                </div>
-
+                <div id="paymentResult" class="result-box"></div>
 
             </section>
-
 
         </div>
 
 
+        <!-- ================= WORKFLOW ================= -->
+        <section class="workflow-section">
 
-        <!-- =========================
-             WORKFLOW
-        ========================== -->
+            <div class="section-heading centered">
 
-        <section class="workflow card">
-
-
-            <h2>
-                Claim Workflow
-            </h2>
-
-
-
-            <div class="workflow-steps">
-
-
-                <div class="workflow-step">
-
-                    <span>
-                        1
-                    </span>
+                <div>
+                    <h2>Expense Claim Workflow</h2>
 
                     <p>
-                        Employee<br>
-                        Submit
+                        Complete reimbursement process from submission to payment
                     </p>
-
                 </div>
-
-
-
-                <div class="arrow">
-                    →
-                </div>
-
-
-
-                <div class="workflow-step">
-
-                    <span>
-                        2
-                    </span>
-
-                    <p>
-                        Policy<br>
-                        Check
-                    </p>
-
-                </div>
-
-
-
-                <div class="arrow">
-                    →
-                </div>
-
-
-
-                <div class="workflow-step">
-
-                    <span>
-                        3
-                    </span>
-
-                    <p>
-                        Manager<br>
-                        Approval
-                    </p>
-
-                </div>
-
-
-
-                <div class="arrow">
-                    →
-                </div>
-
-
-
-                <div class="workflow-step">
-
-                    <span>
-                        4
-                    </span>
-
-                    <p>
-                        Finance<br>
-                        Payment
-                    </p>
-
-                </div>
-
-
-
-                <div class="arrow">
-                    →
-                </div>
-
-
-
-                <div class="workflow-step">
-
-                    <span>
-                        5
-                    </span>
-
-                    <p>
-                        Claim<br>
-                        PAID
-                    </p>
-
-                </div>
-
 
             </div>
 
+
+            <div class="workflow">
+
+                <div class="workflow-step">
+
+                    <div class="step-number">
+                        1
+                    </div>
+
+                    <h3>Employee</h3>
+
+                    <p>
+                        Submit expense claim
+                    </p>
+
+                </div>
+
+
+                <div class="workflow-line"></div>
+
+
+                <div class="workflow-step">
+
+                    <div class="step-number">
+                        2
+                    </div>
+
+                    <h3>Policy Check</h3>
+
+                    <p>
+                        Check category limits
+                    </p>
+
+                </div>
+
+
+                <div class="workflow-line"></div>
+
+
+                <div class="workflow-step">
+
+                    <div class="step-number">
+                        3
+                    </div>
+
+                    <h3>Manager</h3>
+
+                    <p>
+                        Approve or reject
+                    </p>
+
+                </div>
+
+
+                <div class="workflow-line"></div>
+
+
+                <div class="workflow-step">
+
+                    <div class="step-number">
+                        4
+                    </div>
+
+                    <h3>Finance</h3>
+
+                    <p>
+                        Process payment
+                    </p>
+
+                </div>
+
+
+                <div class="workflow-line"></div>
+
+
+                <div class="workflow-step final-step">
+
+                    <div class="step-number">
+                        ✓
+                    </div>
+
+                    <h3>Completed</h3>
+
+                    <p>
+                        Claim paid
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= STATUS LEGEND ================= -->
+        <section class="status-section">
+
+            <h2>Claim Status</h2>
+
+            <div class="status-list">
+
+                <span class="status pending">
+                    ● Pending Approval
+                </span>
+
+                <span class="status approved">
+                    ● Approved
+                </span>
+
+                <span class="status rejected">
+                    ● Rejected
+                </span>
+
+                <span class="status paid">
+                    ● Paid
+                </span>
+
+            </div>
 
         </section>
 
@@ -856,21 +815,30 @@
     </main>
 
 
-
-    <!-- =========================
-         FOOTER
-    ========================== -->
-
+    <!-- ================= FOOTER ================= -->
     <footer>
 
-        Expense Claim Management System
+        <div class="footer-content">
+
+            <div>
+                <strong>ExpenseClaim</strong>
+                <p>Employee Expense Reimbursement System</p>
+            </div>
+
+            <div>
+                <p>Spring Boot • MySQL • REST API</p>
+            </div>
+
+        </div>
+
+        <p class="copyright">
+            © 2026 ExpenseClaim. All rights reserved.
+        </p>
 
     </footer>
 
 
-
     <script src="script.js"></script>
-
 
 </body>
 

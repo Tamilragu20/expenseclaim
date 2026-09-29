@@ -13,7 +13,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class ClaimService {
@@ -130,5 +132,35 @@ public class ClaimService {
     public List<Claim> getClaimsByStatus(String status) {
 
         return claimRepository.findByStatus(status);
+    }
+
+    public List<Claim> getAllClaims() {
+
+        return claimRepository.findAll();
+    }
+
+    public Map<String, Long> getClaimSummary() {
+
+        Map<String, Long> summary = new HashMap<>();
+
+        summary.put("totalClaims", claimRepository.count());
+        summary.put(
+                "pendingManagerApproval",
+                claimRepository.countByStatus("PENDING_MANAGER_APPROVAL")
+        );
+        summary.put(
+                "approved",
+                claimRepository.countByStatus("APPROVED")
+        );
+        summary.put(
+                "rejected",
+                claimRepository.countByStatus("REJECTED")
+        );
+        summary.put(
+                "paid",
+                claimRepository.countByStatus("PAID")
+        );
+
+        return summary;
     }
 }

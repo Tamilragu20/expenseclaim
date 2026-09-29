@@ -1,79 +1,134 @@
 const API = "";
 
 
-// ===============================
-// Load Employee
-// ===============================
+/* =========================================================
+   COMMON RESULT HELPERS
+   ========================================================= */
 
-async function loadEmployee() {
+function showSuccess(elementId, title, message) {
 
-    const employeeId = document.getElementById("employeeId").value;
-    const result = document.getElementById("employeeDetails");
+    const element = document.getElementById(elementId);
+
+    element.innerHTML = `
+        <div class="success-message">
+            <strong>✓ ${title}</strong>
+            <p>${message}</p>
+        </div>
+    `;
+}
+
+
+function showError(elementId, message) {
+
+    const element = document.getElementById(elementId);
+
+    element.innerHTML = `
+        <div class="error-message">
+            <strong>⚠ Something went wrong</strong>
+            <p>${message}</p>
+        </div>
+    `;
+}
+
+
+function getErrorMessage(data) {
+
+    if (data && data.message) {
+        return data.message;
+    }
+
+    if (data && data.error) {
+        return data.error;
+    }
+
+    return "Unable to complete the request.";
+}
+
+
+/* =========================================================
+   DASHBOARD SUMMARY
+   ========================================================= */
+
+async function loadDashboardSummary() {
 
     try {
 
         const response = await fetch(
-            `${API}/employees/${employeeId}`
+            `${API}/claims/summary`
         );
 
         const data = await response.json();
 
+
         if (!response.ok) {
-            throw new Error(data.message || "Employee not found");
+
+            showError(
+                "dashboardResult",
+                getErrorMessage(data)
+            );
+
+            return;
         }
 
-        result.innerHTML = `
-            <p><strong>ID:</strong> ${data.id}</p>
-            <p><strong>Name:</strong> ${data.name}</p>
-            <p><strong>Email:</strong> ${data.email}</p>
-            <p><strong>Department:</strong> ${data.department}</p>
-            <p><strong>Manager:</strong> ${data.managerName}</p>
-        `;
+
+        document.getElementById("totalClaimsCount").textContent =
+            data.totalClaims;
+
+        document.getElementById("pendingClaimsCount").textContent =
+            data.pendingManagerApproval;
+
+        document.getElementById("approvedClaimsCount").textContent =
+            data.approved;
+
+        document.getElementById("rejectedClaimsCount").textContent =
+            data.rejected;
+
+        document.getElementById("paidClaimsCount").textContent =
+            data.paid;
+
 
     } catch (error) {
 
-        result.innerHTML = `
-            <p class="error">${error.message}</p>
-        `;
+        showError(
+            "dashboardResult",
+            "Unable to load dashboard data."
+        );
+
     }
 }
 
 
-// ===============================
-// Add Employee
-// ===============================
+/* =========================================================
+   EMPLOYEE MANAGEMENT
+   ========================================================= */
 
 async function addEmployee() {
 
     const name =
-        document.getElementById("employeeName").value;
+        document.getElementById("employeeName").value.trim();
 
     const email =
-        document.getElementById("employeeEmail").value;
+        document.getElementById("employeeEmail").value.trim();
 
     const department =
-        document.getElementById("employeeDepartment").value;
+        document.getElementById("employeeDepartment").value.trim();
 
     const managerName =
-        document.getElementById("employeeManager").value;
-
-    const result =
-        document.getElementById("employeeResult");
+        document.getElementById("employeeManager").value.trim();
 
 
     if (!name || !email || !department || !managerName) {
 
-        result.innerHTML = `
-            <p class="error">
-                Please fill all employee details.
-            </p>
-        `;
+        showError(
+            "employeeResult",
+            "Please fill in all employee details."
+        );
 
         return;
     }
 
 
-    const requestData = {
+    const employeeData = {
 
         name: name,
 
@@ -82,6 +137,7 @@ async function addEmployee() {
         department: department,
 
         managerName: managerName
+
     };
 
 
@@ -90,13 +146,15 @@ async function addEmployee() {
         const response = await fetch(
             `${API}/employees`,
             {
+
                 method: "POST",
 
                 headers: {
                     "Content-Type": "application/json"
                 },
 
-                body: JSON.stringify(requestData)
+                body: JSON.stringify(employeeData)
+
             }
         );
 
@@ -106,119 +164,400 @@ async function addEmployee() {
 
         if (!response.ok) {
 
-            throw new Error(
-                data.message || "Failed to add employee"
+            showError(
+                "employeeResult",
+                getErrorMessage(data)
             );
+
+            return;
         }
 
 
-        result.innerHTML = `
-            <p class="success">
-                Employee added successfully!
-            </p>
+        showSuccess(
+            "employeeResult",
+            "Employee Added Successfully",
+            `Employee <strong>${data.name}</strong> has been added.
+             Employee ID: <strong>${data.id}</strong>`
+        );
 
-            <p>
-                <strong>Employee ID:</strong>
-                ${data.id}
-            </p>
-
-            <p>
-                <strong>Name:</strong>
-                ${data.name}
-            </p>
-
-            <p>
-                <strong>Email:</strong>
-                ${data.email}
-            </p>
-
-            <p>
-                <strong>Department:</strong>
-                ${data.department}
-            </p>
-
-            <p>
-                <strong>Manager:</strong>
-                ${data.managerName}
-            </p>
-        `;
-
-
-        // Clear form after successful creation
 
         document.getElementById("employeeName").value = "";
+
         document.getElementById("employeeEmail").value = "";
+
         document.getElementById("employeeDepartment").value = "";
+
         document.getElementById("employeeManager").value = "";
 
 
     } catch (error) {
 
-        result.innerHTML = `
-            <p class="error">
-                ${error.message}
-            </p>
-        `;
+        showError(
+            "employeeResult",
+            "Unable to connect to the server."
+        );
+
     }
 }
 
 
-// ===============================
-// Create Claim
-// ===============================
+/* =========================================================
+   VIEW EMPLOYEE
+   ========================================================= */
 
-async function createClaim() {
+async function loadEmployee() {
 
     const employeeId =
         document.getElementById("employeeId").value;
 
-    const description =
-        document.getElementById("claimDescription").value;
 
-    const category =
-        document.getElementById("category").value;
+    if (!employeeId) {
 
-    const expenseDescription =
-        document.getElementById("expenseDescription").value;
-
-    const amount =
-        document.getElementById("amount").value;
-
-    const result =
-        document.getElementById("claimResult");
-
-    if (!description || !expenseDescription || !amount) {
-
-        result.innerHTML = `
-            <p class="error">
-                Please fill all claim details.
-            </p>
-        `;
+        showError(
+            "employeeDetails",
+            "Please enter an employee ID."
+        );
 
         return;
     }
 
-    const today =
-        new Date().toISOString().split("T")[0];
 
-    const requestData = {
+    try {
+
+        const response = await fetch(
+            `${API}/employees/${employeeId}`
+        );
+
+
+        const data = await response.json();
+
+
+        if (!response.ok) {
+
+            showError(
+                "employeeDetails",
+                getErrorMessage(data)
+            );
+
+            return;
+        }
+
+
+        document.getElementById("employeeDetails").innerHTML = `
+
+            <div class="employee-result-card">
+
+                <strong>✓ Employee Found</strong>
+
+                <div class="details-grid">
+
+                    <p>
+                        <b>ID:</b>
+                        ${data.id}
+                    </p>
+
+                    <p>
+                        <b>Name:</b>
+                        ${data.name}
+                    </p>
+
+                    <p>
+                        <b>Email:</b>
+                        ${data.email}
+                    </p>
+
+                    <p>
+                        <b>Department:</b>
+                        ${data.department}
+                    </p>
+
+                    <p>
+                        <b>Manager:</b>
+                        ${data.managerName}
+                    </p>
+
+                </div>
+
+            </div>
+
+        `;
+
+
+    } catch (error) {
+
+        showError(
+            "employeeDetails",
+            "Unable to connect to the server."
+        );
+
+    }
+}
+
+
+/* =========================================================
+   VIEW EMPLOYEE CLAIMS
+   ========================================================= */
+
+async function loadEmployeeClaims() {
+
+    const employeeId =
+        document.getElementById("employeeClaimsId").value;
+
+
+    if (!employeeId) {
+
+        showError(
+            "employeeClaimsResult",
+            "Please enter an employee ID."
+        );
+
+        return;
+    }
+
+
+    try {
+
+        const response = await fetch(
+            `${API}/claims/employee/${employeeId}`
+        );
+
+
+        const data = await response.json();
+
+
+        if (!response.ok) {
+
+            showError(
+                "employeeClaimsResult",
+                getErrorMessage(data)
+            );
+
+            return;
+        }
+
+
+        if (!Array.isArray(data) || data.length === 0) {
+
+            document.getElementById(
+                "employeeClaimsResult"
+            ).innerHTML = `
+
+                <div class="employee-result-card">
+
+                    <strong>📋 No Claims Found</strong>
+
+                    <p>
+                        This employee has not submitted any expense claims.
+                    </p>
+
+                </div>
+
+            `;
+
+            return;
+        }
+
+
+        let claimsHTML = `
+
+            <div class="employee-result-card">
+
+                <strong>📋 Employee Claims</strong>
+
+                <div class="claim-list">
+
+        `;
+
+
+        data.forEach(claim => {
+
+            let statusClass = "pending";
+
+
+            if (claim.status === "APPROVED") {
+
+                statusClass = "approved";
+
+            }
+
+            else if (claim.status === "REJECTED") {
+
+                statusClass = "rejected";
+
+            }
+
+            else if (claim.status === "PAID") {
+
+                statusClass = "paid";
+
+            }
+
+
+            let flaggedText = "No";
+
+
+            if (
+                claim.expenseItems &&
+                claim.expenseItems.some(
+                    item => item.flagged
+                )
+            ) {
+
+                flaggedText = "Yes";
+
+            }
+
+
+            claimsHTML += `
+
+                <div class="claim-item">
+
+                    <div class="claim-item-header">
+
+                        <strong>
+                            Claim #${claim.id}
+                        </strong>
+
+                        <span class="status ${statusClass}">
+                            ● ${claim.status}
+                        </span>
+
+                    </div>
+
+
+                    <div class="claim-details">
+
+                        <p>
+                            <b>Date:</b>
+                            ${claim.claimDate}
+                        </p>
+
+                        <p>
+                            <b>Description:</b>
+                            ${claim.description}
+                        </p>
+
+                        <p>
+                            <b>Total Amount:</b>
+                            ₹${claim.totalAmount}
+                        </p>
+
+                        <p>
+                            <b>Policy Flag:</b>
+                            ${flaggedText}
+                        </p>
+
+                    </div>
+
+                </div>
+
+            `;
+
+        });
+
+
+        claimsHTML += `
+
+                </div>
+
+            </div>
+
+        `;
+
+
+        document.getElementById(
+            "employeeClaimsResult"
+        ).innerHTML = claimsHTML;
+
+
+    } catch (error) {
+
+        showError(
+            "employeeClaimsResult",
+            "Unable to connect to the server."
+        );
+
+    }
+}
+
+
+/* =========================================================
+   CREATE EXPENSE CLAIM
+   ========================================================= */
+
+async function createClaim() {
+
+    const employeeId =
+        document.getElementById("claimEmployeeId").value;
+
+
+    const description =
+        document.getElementById("claimDescription").value.trim();
+
+
+    const category =
+        document.getElementById("category").value;
+
+
+    const expenseDescription =
+        document.getElementById("expenseDescription").value.trim();
+
+
+    const amount =
+        document.getElementById("amount").value;
+
+
+    if (
+        !employeeId ||
+        !description ||
+        !category ||
+        !expenseDescription ||
+        !amount
+    ) {
+
+        showError(
+            "claimResult",
+            "Please fill in all claim details."
+        );
+
+        return;
+    }
+
+
+    if (Number(amount) <= 0) {
+
+        showError(
+            "claimResult",
+            "Expense amount must be greater than zero."
+        );
+
+        return;
+    }
+
+
+    const claimData = {
 
         employeeId: Number(employeeId),
 
-        claimDate: today,
+        claimDate:
+            new Date().toISOString().split("T")[0],
 
         description: description,
 
         expenseItems: [
 
             {
+
                 category: category,
 
                 description: expenseDescription,
 
                 amount: Number(amount)
+
             }
+
         ]
+
     };
 
 
@@ -227,85 +566,102 @@ async function createClaim() {
         const response = await fetch(
             `${API}/claims`,
             {
+
                 method: "POST",
 
                 headers: {
                     "Content-Type": "application/json"
                 },
 
-                body: JSON.stringify(requestData)
+                body: JSON.stringify(claimData)
+
             }
         );
 
+
         const data = await response.json();
 
+
         if (!response.ok) {
-            throw new Error(
-                data.message || "Failed to create claim"
+
+            showError(
+                "claimResult",
+                getErrorMessage(data)
             );
+
+            return;
         }
 
 
-        result.innerHTML = `
-            <p class="success">
-                Claim created successfully!
-            </p>
+        showSuccess(
+            "claimResult",
+            "Expense Claim Submitted",
+            `
+                Claim ID:
+                <strong>${data.id}</strong>
+                <br>
 
-            <p>
-                <strong>Claim ID:</strong>
-                ${data.id}
-            </p>
+                Total Amount:
+                <strong>₹${data.totalAmount}</strong>
+                <br>
 
-            <p>
-                <strong>Total Amount:</strong>
-                ₹${data.totalAmount}
-            </p>
+                Status:
+                <strong>${data.status}</strong>
+            `
+        );
 
-            <p>
-                <strong>Status:</strong>
-                ${data.status}
-            </p>
 
-            <p>
-                <strong>Policy Limit:</strong>
-                ₹${data.expenseItems[0].policyLimit}
-            </p>
+        document.getElementById(
+            "claimDescription"
+        ).value = "";
 
-            <p>
-                <strong>Flagged:</strong>
-                ${data.expenseItems[0].flagged}
-            </p>
-        `;
+
+        document.getElementById(
+            "category"
+        ).value = "";
+
+
+        document.getElementById(
+            "expenseDescription"
+        ).value = "";
+
+
+        document.getElementById(
+            "amount"
+        ).value = "";
+
+
+        // Refresh dashboard after creating claim
+        loadDashboardSummary();
+
 
     } catch (error) {
 
-        result.innerHTML = `
-            <p class="error">${error.message}</p>
-        `;
+        showError(
+            "claimResult",
+            "Unable to connect to the server."
+        );
+
     }
 }
 
 
-// ===============================
-// Get Claim
-// ===============================
+/* =========================================================
+   GET CLAIM STATUS
+   ========================================================= */
 
 async function getClaim() {
 
     const claimId =
         document.getElementById("claimId").value;
 
-    const result =
-        document.getElementById("claimDetails");
-
 
     if (!claimId) {
 
-        result.innerHTML = `
-            <p class="error">
-                Please enter Claim ID.
-            </p>
-        `;
+        showError(
+            "claimStatus",
+            "Please enter a claim ID."
+        );
 
         return;
     }
@@ -317,89 +673,136 @@ async function getClaim() {
             `${API}/claims/${claimId}`
         );
 
+
         const data = await response.json();
 
+
         if (!response.ok) {
-            throw new Error(
-                data.message || "Claim not found"
+
+            showError(
+                "claimStatus",
+                getErrorMessage(data)
             );
+
+            return;
         }
 
 
-        result.innerHTML = `
-            <p><strong>Claim ID:</strong> ${data.id}</p>
+        let statusClass = "pending";
 
-            <p>
-                <strong>Description:</strong>
-                ${data.description}
-            </p>
 
-            <p>
-                <strong>Total Amount:</strong>
-                ₹${data.totalAmount}
-            </p>
+        if (data.status === "APPROVED") {
 
-            <p>
-                <strong>Status:</strong>
-                ${data.status}
-            </p>
+            statusClass = "approved";
 
-            <p>
-                <strong>Manager Override:</strong>
-                ${data.managerOverride}
-            </p>
+        }
+
+        else if (data.status === "REJECTED") {
+
+            statusClass = "rejected";
+
+        }
+
+        else if (data.status === "PAID") {
+
+            statusClass = "paid";
+
+        }
+
+
+        document.getElementById("claimStatus").innerHTML = `
+
+            <div class="claim-status-card">
+
+                <strong>Claim #${data.id}</strong>
+
+                <div class="claim-details">
+
+                    <p>
+                        <b>Description:</b>
+                        ${data.description}
+                    </p>
+
+                    <p>
+                        <b>Total Amount:</b>
+                        ₹${data.totalAmount}
+                    </p>
+
+                    <p>
+                        <b>Status:</b>
+
+                        <span class="status ${statusClass}">
+                            ● ${data.status}
+                        </span>
+
+                    </p>
+
+                    <p>
+                        <b>Manager Override:</b>
+                        ${data.managerOverride ? "Yes" : "No"}
+                    </p>
+
+                </div>
+
+            </div>
+
         `;
+
 
     } catch (error) {
 
-        result.innerHTML = `
-            <p class="error">${error.message}</p>
-        `;
+        showError(
+            "claimStatus",
+            "Unable to connect to the server."
+        );
+
     }
 }
 
 
-// ===============================
-// Manager Approval
-// ===============================
+/* =========================================================
+   MANAGER APPROVAL
+   ========================================================= */
 
 async function approveClaim() {
 
     const claimId =
         document.getElementById("approvalClaimId").value;
 
+
     const managerName =
-        document.getElementById("managerName").value;
+        document.getElementById("managerName").value.trim();
+
 
     const remarks =
-        document.getElementById("remarks").value;
+        document.getElementById("approvalRemarks").value.trim();
+
 
     const managerOverride =
         document.getElementById("managerOverride").checked;
 
-    const result =
-        document.getElementById("approvalResult");
 
+    if (!claimId || !managerName) {
 
-    if (!claimId || !managerName || !remarks) {
-
-        result.innerHTML = `
-            <p class="error">
-                Please fill all approval details.
-            </p>
-        `;
+        showError(
+            "approvalResult",
+            "Please enter Claim ID and Manager Name."
+        );
 
         return;
     }
 
 
-    const requestData = {
+    const approvalData = {
 
         managerName: managerName,
 
-        remarks: remarks,
+        remarks:
+            remarks || "Claim approved by manager.",
 
-        managerOverride: managerOverride
+        managerOverride:
+            managerOverride
+
     };
 
 
@@ -408,88 +811,236 @@ async function approveClaim() {
         const response = await fetch(
             `${API}/claims/${claimId}/approve`,
             {
+
                 method: "PUT",
 
                 headers: {
                     "Content-Type": "application/json"
                 },
 
-                body: JSON.stringify(requestData)
+                body: JSON.stringify(approvalData)
+
             }
         );
+
 
         const data = await response.json();
 
 
         if (!response.ok) {
 
-            throw new Error(
-                data.message || "Approval failed"
+            showError(
+                "approvalResult",
+                getErrorMessage(data)
             );
+
+            return;
         }
 
 
-        result.innerHTML = `
-            <p class="success">
-                Claim approved successfully!
-            </p>
+        showSuccess(
+            "approvalResult",
+            "Claim Approved",
+            `
+                Claim
+                <strong>#${data.id}</strong>
+                has been approved successfully.
+                <br>
 
-            <p>
-                <strong>Claim ID:</strong>
-                ${data.id}
-            </p>
+                Current Status:
+                <strong>${data.status}</strong>
+            `
+        );
 
-            <p>
-                <strong>Status:</strong>
-                ${data.status}
-            </p>
 
-            <p>
-                <strong>Manager Override:</strong>
-                ${data.managerOverride}
-            </p>
-        `;
+        document.getElementById(
+            "approvalClaimId"
+        ).value = "";
+
+
+        document.getElementById(
+            "managerName"
+        ).value = "";
+
+
+        document.getElementById(
+            "approvalRemarks"
+        ).value = "";
+
+
+        document.getElementById(
+            "managerOverride"
+        ).checked = false;
+
+
+        // Refresh dashboard after approval
+        loadDashboardSummary();
+
 
     } catch (error) {
 
-        result.innerHTML = `
-            <p class="error">${error.message}</p>
-        `;
+        showError(
+            "approvalResult",
+            "Unable to connect to the server."
+        );
+
     }
 }
 
 
-// ===============================
-// Finance Payment
-// ===============================
+/* =========================================================
+   MANAGER REJECTION
+   ========================================================= */
+
+async function rejectClaim() {
+
+    const claimId =
+        document.getElementById("approvalClaimId").value;
+
+
+    const managerName =
+        document.getElementById("managerName").value.trim();
+
+
+    const remarks =
+        document.getElementById("approvalRemarks").value.trim();
+
+
+    if (!claimId || !managerName) {
+
+        showError(
+            "approvalResult",
+            "Please enter Claim ID and Manager Name."
+        );
+
+        return;
+    }
+
+
+    const rejectionData = {
+
+        managerName: managerName,
+
+        remarks:
+            remarks || "Claim rejected by manager.",
+
+        managerOverride: false
+
+    };
+
+
+    try {
+
+        const response = await fetch(
+            `${API}/claims/${claimId}/reject`,
+            {
+
+                method: "PUT",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify(rejectionData)
+
+            }
+        );
+
+
+        const data = await response.json();
+
+
+        if (!response.ok) {
+
+            showError(
+                "approvalResult",
+                getErrorMessage(data)
+            );
+
+            return;
+        }
+
+
+        showSuccess(
+            "approvalResult",
+            "Claim Rejected",
+            `
+                Claim
+                <strong>#${data.id}</strong>
+                has been rejected successfully.
+                <br>
+
+                Current Status:
+                <strong>${data.status}</strong>
+            `
+        );
+
+
+        document.getElementById(
+            "approvalClaimId"
+        ).value = "";
+
+
+        document.getElementById(
+            "managerName"
+        ).value = "";
+
+
+        document.getElementById(
+            "approvalRemarks"
+        ).value = "";
+
+
+        document.getElementById(
+            "managerOverride"
+        ).checked = false;
+
+
+        // Refresh dashboard after rejection
+        loadDashboardSummary();
+
+
+    } catch (error) {
+
+        showError(
+            "approvalResult",
+            "Unable to connect to the server."
+        );
+
+    }
+}
+
+
+/* =========================================================
+   FINANCE PAYMENT
+   ========================================================= */
 
 async function payClaim() {
 
     const claimId =
         document.getElementById("paymentClaimId").value;
 
-    const paymentReference =
-        document.getElementById("paymentReference").value;
 
-    const result =
-        document.getElementById("paymentResult");
+    const paymentReference =
+        document.getElementById("paymentReference").value.trim();
 
 
     if (!claimId || !paymentReference) {
 
-        result.innerHTML = `
-            <p class="error">
-                Please enter Claim ID and Payment Reference.
-            </p>
-        `;
+        showError(
+            "paymentResult",
+            "Please enter Claim ID and Payment Reference."
+        );
 
         return;
     }
 
 
-    const requestData = {
+    const paymentData = {
 
-        paymentReference: paymentReference
+        paymentReference:
+            paymentReference
+
     };
 
 
@@ -498,52 +1049,83 @@ async function payClaim() {
         const response = await fetch(
             `${API}/finance/claims/${claimId}/pay`,
             {
+
                 method: "PUT",
 
                 headers: {
                     "Content-Type": "application/json"
                 },
 
-                body: JSON.stringify(requestData)
+                body: JSON.stringify(paymentData)
+
             }
         );
+
 
         const data = await response.json();
 
 
         if (!response.ok) {
 
-            throw new Error(
-                data.message || "Payment failed"
+            showError(
+                "paymentResult",
+                getErrorMessage(data)
             );
+
+            return;
         }
 
 
-        result.innerHTML = `
-            <p class="success">
-                Claim marked as PAID successfully!
-            </p>
+        showSuccess(
+            "paymentResult",
+            "Payment Completed",
+            `
+                Claim
+                <strong>#${data.id}</strong>
+                has been marked as
+                <strong>PAID</strong>.
+                <br>
 
-            <p>
-                <strong>Claim ID:</strong>
-                ${data.id}
-            </p>
+                Payment Reference:
+                <strong>${paymentReference}</strong>
+            `
+        );
 
-            <p>
-                <strong>Total Amount:</strong>
-                ₹${data.totalAmount}
-            </p>
 
-            <p>
-                <strong>Status:</strong>
-                ${data.status}
-            </p>
-        `;
+        document.getElementById(
+            "paymentClaimId"
+        ).value = "";
+
+
+        document.getElementById(
+            "paymentReference"
+        ).value = "";
+
+
+        // Refresh dashboard after payment
+        loadDashboardSummary();
+
 
     } catch (error) {
 
-        result.innerHTML = `
-            <p class="error">${error.message}</p>
-        `;
+        showError(
+            "paymentResult",
+            "Unable to connect to the server."
+        );
+
     }
 }
+
+
+/* =========================================================
+   LOAD DASHBOARD WHEN PAGE OPENS
+   ========================================================= */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        loadDashboardSummary();
+
+    }
+);
